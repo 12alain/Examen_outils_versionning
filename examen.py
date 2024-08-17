@@ -34,7 +34,8 @@ def create_readme_file(target_directory):
     if not os.path.exists(readme_path):
         with open(readme_path, "w") as readme_file:
             readme_file.write(
-                "# Mon Projet d'Analyse de Données\n\nRemplissez ici la description de votre projet."
+                "# Mon Projet d'Analyse de Données\n\n"
+                "Remplissez ici la description de votre projet."
             )
 
 
@@ -66,7 +67,8 @@ def create_github_repo(headers, repo_data):
         return response.json()["clone_url"]
     else:
         print(
-            f"Échec de la création du dépôt sur GitHub. Code de statut : {response.status_code}, Réponse : {response.text}"
+            f"Échec de la création du dépôt sur GitHub. Code de statut : "
+            f"{response.status_code}, Réponse : {response.text}"
         )
         return None
 
@@ -100,7 +102,8 @@ def create_github_issues(headers, username, repo_name):
             print(f"Ticket '{issue['title']}' créé avec succès.")
         else:
             print(
-                f"Échec de la création du ticket '{issue['title']}'. Code de statut : {issue_response.status_code}, Réponse : {issue_response.text}"
+                f"Échec de la création du ticket '{issue['title']}'. Code de statut : "
+                f"{issue_response.status_code}, Réponse : {issue_response.text}"
             )
 
 
