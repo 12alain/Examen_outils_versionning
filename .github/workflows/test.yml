@@ -40,6 +40,6 @@ jobs:
       # Étape pour vérifier la qualité du code avec Ruff
       - name: Run Ruff
         run: |
-          ruff . --select E,W,F
+          ruff check . --select E,W,F
 
       
