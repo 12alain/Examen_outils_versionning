@@ -35,13 +35,11 @@ jobs:
       # Étape pour vérifier le formatage du code avec Black
       - name: Run Black
         run: |
-          pip install black
           black --check .
 
       # Étape pour vérifier la qualité du code avec Ruff
       - name: Run Ruff
         run: |
-          pip install ruff
           ruff . --select E,W,F
 
       
