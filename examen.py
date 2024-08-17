@@ -2,12 +2,16 @@ import os
 import subprocess
 import requests
 
+
 # Récupérons le token d'accès personnel à partir de la variable d'environnement
 def get_personal_access_token():
     personal_access_token = os.getenv("GITHUB_ACCESS_TOKEN")
     if not personal_access_token:
-        raise ValueError("Veuillez définir la variable d'environnement GITHUB_ACCESS_TOKEN.")
+        raise ValueError(
+            "Veuillez définir la variable d'environnement GITHUB_ACCESS_TOKEN."
+        )
     return personal_access_token
+
 
 # Vérifions si le dépôt existe déjà sur GitHub
 def check_if_repo_exists(headers, username, repo_name):
@@ -15,19 +19,24 @@ def check_if_repo_exists(headers, username, repo_name):
     response = requests.get(repo_url, headers=headers)
     return response.status_code == 200
 
+
 # Créons le répertoire local sur le bureau de l'utilisateur
 def create_local_directory(directory_name):
-    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+    desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
     target_directory = os.path.join(desktop_path, directory_name)
     os.makedirs(target_directory, exist_ok=True)
     return target_directory
+
 
 # Créons le fichier README.md
 def create_readme_file(target_directory):
     readme_path = os.path.join(target_directory, "README.md")
     if not os.path.exists(readme_path):
         with open(readme_path, "w") as readme_file:
-            readme_file.write("# Mon Projet d'Analyse de Données\n\nRemplissez ici la description de votre projet.")
+            readme_file.write(
+                "# Mon Projet d'Analyse de Données\n\nRemplissez ici la description de votre projet."
+            )
+
 
 # Créons le fichier LICENSE
 def create_license_file(target_directory):
@@ -36,40 +45,64 @@ def create_license_file(target_directory):
         with open(license_path, "w") as license_file:
             license_file.write("Conditions de licence à définir ici.")
 
+
 # Initialisons un dépôt Git local et faisons le premier commit
 def initialize_git_repo(target_directory):
     subprocess.run(["git", "init"], cwd=target_directory)
     subprocess.run(["git", "add", "."], cwd=target_directory)
-    subprocess.run(["git", "commit", "-m", "Premier commit avec README.md et LICENSE"], cwd=target_directory)
+    subprocess.run(
+        ["git", "commit", "-m", "Premier commit avec README.md et LICENSE"],
+        cwd=target_directory,
+    )
+
 
 # Créons un dépôt sur GitHub
 def create_github_repo(headers, repo_data):
-    response = requests.post("https://api.github.com/user/repos", json=repo_data, headers=headers)
+    response = requests.post(
+        "https://api.github.com/user/repos", json=repo_data, headers=headers
+    )
     if response.status_code == 201:
         print(f"Dépôt '{repo_data['name']}' créé avec succès sur GitHub.")
         return response.json()["clone_url"]
     else:
-        print(f"Échec de la création du dépôt sur GitHub. Code de statut : {response.status_code}, Réponse : {response.text}")
+        print(
+            f"Échec de la création du dépôt sur GitHub. Code de statut : {response.status_code}, Réponse : {response.text}"
+        )
         return None
+
 
 # Ajoutons le dépôt GitHub en tant que remote et poussons le code
 def push_code_to_github(repo_url, target_directory):
     subprocess.run(["git", "remote", "add", "origin", repo_url], cwd=target_directory)
     subprocess.run(["git", "push", "-u", "origin", "master"], cwd=target_directory)
 
+
 # Ajoutons deux tickets au dépôt GitHub
 def create_github_issues(headers, username, repo_name):
     issues = [
-        {"title": "Ticket 1 : Configuration initiale", "body": "Ce ticket suit la configuration initiale du dépôt."},
-        {"title": "Ticket 2 : Ajouter un module de nettoyage des données", "body": "Implémenter le module de nettoyage des données pour le projet."}
+        {
+            "title": "Ticket 1 : Configuration initiale",
+            "body": "Ce ticket suit la configuration initiale du dépôt.",
+        },
+        {
+            "title": "Ticket 2 : Ajouter un module de nettoyage des données",
+            "body": "Implémenter le module de nettoyage des données pour le projet.",
+        },
     ]
-    
+
     for issue in issues:
-        issue_response = requests.post(f"https://api.github.com/repos/{username}/{repo_name}/issues", json=issue, headers=headers)
+        issue_response = requests.post(
+            f"https://api.github.com/repos/{username}/{repo_name}/issues",
+            json=issue,
+            headers=headers,
+        )
         if issue_response.status_code == 201:
             print(f"Ticket '{issue['title']}' créé avec succès.")
         else:
-            print(f"Échec de la création du ticket '{issue['title']}'. Code de statut : {issue_response.status_code}, Réponse : {issue_response.text}")
+            print(
+                f"Échec de la création du ticket '{issue['title']}'. Code de statut : {issue_response.status_code}, Réponse : {issue_response.text}"
+            )
+
 
 # Fonction principale pour exécuter tout le processus
 def main():
@@ -82,7 +115,7 @@ def main():
     # En-têtes de l'API GitHub
     headers = {
         "Authorization": f"token {personal_access_token}",
-        "Accept": "application/vnd.github.v3+json"
+        "Accept": "application/vnd.github.v3+json",
     }
 
     # Saisir le nom du dépôt
@@ -107,7 +140,7 @@ def main():
     repo_data = {
         "name": repo_name,
         "description": "Ceci est mon nouveau dépôt",
-        "private": False
+        "private": False,
     }
 
     # Créons le dépôt sur GitHub
@@ -118,6 +151,7 @@ def main():
         push_code_to_github(repo_url, target_directory)
         # Ajoutons des tickets GitHub
         create_github_issues(headers, USERNAME, repo_name)
+
 
 # Exécutez la fonction principale
 if __name__ == "__main__":
